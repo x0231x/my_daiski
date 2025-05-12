@@ -47,9 +47,12 @@ router.get('/', async (req, res, next) => {
       const products = raw.map((p) => ({
         id: p.id,
         name: p.name,
+        // image: p.product_image[0]
+        //   ? `http://localhost:3005${p.product_image[0].url}`
+        //   : 'http://localhost:3005/placeholder.jpg',
         image: p.product_image[0]
-          ? `http://localhost:3005${p.product_image[0].url}`
-          : 'http://localhost:3005/placeholder.jpg',
+        ? `${p.product_image[0].url}`
+        : 'placeholder.jpg',
         price: p.product_sku[0]?.price ?? 0,
         category: p.product_category?.name ?? '無分類',
         brand: p.product_brand?.name ?? '無品牌',
