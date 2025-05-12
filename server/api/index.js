@@ -110,7 +110,8 @@ app.get('/', (req, res) => res.send('Express server is running.'));
 //  routes/user.js ==> /api/user
 //  routes/user/login.js ==> /api/user/login
 const apiPath = '/api'; // 預設路由
-const routePath = path.join(process.cwd(), 'routes');
+// const routePath = path.join(process.cwd(), 'routes');
+const routePath = path.join(process.cwd(), 'server', 'routes');
 const filenames = await fs.promises.readdir(routePath);
 
 for (const filename of filenames) {
