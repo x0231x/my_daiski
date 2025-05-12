@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./api/index.js",
     "dev": "nodemon ./api/index.js",
-    "build": "prisma generate && prisma db push --force-reset",
+    "build": "prisma generate",
     "vercel-build": "prisma generate",
     "debug": "DEBUG=express:* node ./api/index.js",
     "debug-win": "set DEBUG=express:* & node ./api/index.js",
