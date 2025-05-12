@@ -32,7 +32,7 @@ function ProductClientPage() {
   useEffect(() => {
     const { page, limit } = pageInfo;
     // const url = new URL('http://localhost:3005/api/products');
-    const url = '/api/products';
+    const url = new URL('/api/products');
     url.searchParams.set('include', 'card');
     url.searchParams.set('page', page);
     url.searchParams.set('limit', limit);
