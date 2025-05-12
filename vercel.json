@@ -1,6 +1,20 @@
 {
   "version": 2,
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/next",
+      "config": { "distDir": ".next" }
+    },
+    {
+      "src": "server/api/index.js", 
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server/api/$1" },  
+    { "source": "/(.*)", "destination": "/client/$1" }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
