@@ -127,7 +127,10 @@ function ProductClientPage() {
   // 根據 pageInfo.page & pageInfo.limit 去撈資料
   useEffect(() => {
     const { page, limit } = pageInfo;
-    const url = `/api/products?include=card&page=${page}&limit=${limit}`;
+    const base = process.env.NEXT_PUBLIC_API_BASE || '';
+    // const url = `http://localhost:3005/api/products?include=card&page=${page}&limit=${limit}`;
+    // const url = `/api/products?include=card&page=${page}&limit=${limit}`;
+    const url = `${base}/api/products?include=card&page=${page}&limit=${limit}`;
 
     // 開始載入
     setProducts(null);
