@@ -1,4 +1,6 @@
 'use client';
+
+import { Suspense } from 'react';
 import Container from '@/components/container';
 import ProductList from './_components/product-list';
 import ProductFilter from './_components/product-filter';
@@ -6,30 +8,10 @@ import ProductPagination from './_components/product-pagination';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-// 1. Next.js Server Component（可直接 await fetch）
-// export default async function ProductsPage() {
-//   // 2. 呼叫後端 API
-//   const res = await fetch('http://localhost:4000/api/products')
-//   const products = await res.json()
-
-//   console.log(products)
-//   console.log(typeof [products])
-//   return (
-//     <>
-//       <Container>
-//         <main className="">
-//           <ProductList products={products} />
-//         </main>
-//       </Container>
-//     </>
-//   )
-// }
-
-export default function ProductPage() {
+function ProductClientPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // 初始 state：從 URL 讀 page & limit，fallback 分別是 1 與 12
   const [pageInfo, setPageInfo] = useState({
     page: parseInt(searchParams.get('page') || '1', 10),
     limit: parseInt(searchParams.get('limit') || '12', 10),
@@ -37,7 +19,6 @@ export default function ProductPage() {
   });
   const [products, setProducts] = useState([]);
 
-  // 監聽 URL 上的 page & limit 變化，更新 state
   useEffect(() => {
     const currentPage = parseInt(searchParams.get('page') || '1', 10);
     const currentLimit = parseInt(searchParams.get('limit') || '12', 10);
@@ -72,7 +53,7 @@ export default function ProductPage() {
 
   const changeLimit = (newLimit) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('page', '1'); // 換每頁數量時重置為第 1 頁
+    current.set('page', '1');
     current.set('limit', newLimit);
     router.push(`?${current.toString()}`);
     setPageInfo((prev) => ({
@@ -98,5 +79,13 @@ export default function ProductPage() {
         </div>
       </main>
     </Container>
+  );
+}
+
+export default function ProductPage() {
+  return (
+    <Suspense fallback={<div>載入中...</div>}>
+      <ProductClientPage />
+    </Suspense>
   );
 }
