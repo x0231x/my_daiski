@@ -61,6 +61,7 @@ export default function ProductSidebarSearch({
       {(searchValue.length >= 2 || suggestions.length > 0) && (
         <CommandList className="max-h-60 overflow-auto">
           {isLoading ? (
+<<<<<<< HEAD
             <div className="p-2 text-sm  text-gray-500 dark:text-white">
               搜尋中...
             </div>
@@ -68,6 +69,13 @@ export default function ProductSidebarSearch({
             <>
               {suggestions.length === 0 ? (
                 <CommandEmpty className="p-2 text-sm  text-gray-500 dark:text-white">
+=======
+            <div className="p-2 text-sm text-gray-500">搜尋中...</div>
+          ) : (
+            <>
+              {suggestions.length === 0 ? (
+                <CommandEmpty className="p-2 text-sm text-gray-500">
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
                   找不到結果
                 </CommandEmpty>
               ) : (

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import express from 'express';
 const router = express.Router();
 import * as crypto from 'crypto';
@@ -11,6 +12,21 @@ const upload = multer();
 import authenticate from '../middlewares/authenticate.js';
 
 import { generateToken } from '../lib/otp.js';
+=======
+import express from 'express'
+const router = express.Router()
+import * as crypto from 'crypto'
+// 用來產生JWT token的函式
+import jsonwebtoken from 'jsonwebtoken'
+// 用來處理FormData的中介軟體
+import multer from 'multer'
+// `upload.none()`可用來處理沒有檔案上傳時，要獲取FormData的資料
+const upload = multer()
+// 中介軟體，存取隱私會員資料用
+import authenticate from '../middlewares/authenticate.js'
+
+import { generateToken } from '../lib/otp.js'
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 導入服務層的函式
 import {
@@ -19,6 +35,7 @@ import {
   verifyOtp,
   hasUnexpiredOtpByEmail,
   resetPassword,
+<<<<<<< HEAD
 } from '../services/auth.js';
 import {
   getUserById,
@@ -51,6 +68,41 @@ const channel_secret = isDev
 const callback_url = isDev
   ? serverConfig.lineLogin.development.callbackUrl
   : serverConfig.lineLogin.production.callbackUrl;
+=======
+} from '../services/auth.js'
+import {
+  getUserById,
+  getUserFavorites,
+  getUserByField,
+  createUser,
+  updateUserDataByField,
+} from '../services/user.js'
+// 寄送email函式
+import { sendOtpMail } from '../lib/mail.js'
+// 導入回應函式
+import { successResponse, errorResponse, isDev } from '../lib/utils.js'
+// line-login模組
+import line_login from '../lib/line-login.js'
+// 設定環境變數
+import { serverConfig } from '../config/server.config.js'
+
+// 取得安全的私鑰字串
+const accessTokenSecret = serverConfig.jwt.secret
+// otp 用
+const otpExpire = serverConfig.otp.expire
+// line 登入使用
+const channel_id = isDev
+  ? serverConfig.lineLogin.development.channelId
+  : serverConfig.lineLogin.production.channelId
+
+const channel_secret = isDev
+  ? serverConfig.lineLogin.development.channelSecret
+  : serverConfig.lineLogin.production.channelSecret
+
+const callback_url = isDev
+  ? serverConfig.lineLogin.development.callbackUrl
+  : serverConfig.lineLogin.production.callbackUrl
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 const LineLogin = new line_login({
   channel_id,
@@ -62,7 +114,11 @@ const LineLogin = new line_login({
   scope: 'openid profile',
   prompt: 'consent',
   bot_prompt: 'normal',
+<<<<<<< HEAD
 });
+=======
+})
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 登入主機共用，產生JWT存取令牌(access token)
 // 需要準備登入完成放在最後一行，例如: `await generateAccessToken(res, user)`
@@ -70,7 +126,11 @@ const generateAccessToken = async (res, user) => {
   // 產生存取令牌(access token)，其中包含會員資料
   const accessToken = jsonwebtoken.sign(user, accessTokenSecret, {
     expiresIn: '3d', // 有效期限3天
+<<<<<<< HEAD
   });
+=======
+  })
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
   // 使用httpOnly cookie來讓瀏覽器端儲存access token
   // 如果是正式環境，sameSite: 'none' 要設定secure: true，表示只有https連線才會傳送cookie
@@ -81,6 +141,7 @@ const generateAccessToken = async (res, user) => {
         sameSite: 'none',
         secure: true,
         domain: serverConfig.domain,
+<<<<<<< HEAD
       };
 
   // 設定cookie
@@ -95,6 +156,23 @@ const generateAccessToken = async (res, user) => {
   // 傳送access token回應(例如react可以儲存在state中使用)
   successResponse(res, { user: allUserData });
 };
+=======
+      }
+
+  // 設定cookie
+  res.cookie('accessToken', accessToken, option)
+
+  // 取得會員id
+  const userId = user.id
+  // 取得會員所有資料，包含profile
+  const allUserData = await getUserById(userId)
+  // 取得會員收藏清單
+  const favorites = await getUserFavorites(userId)
+
+  // 傳送access token回應(例如react可以儲存在state中使用)
+  successResponse(res, { user: allUserData, favorites })
+}
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 const logoutClearCookie = (res) => {
   // 如果是正式環境，sameSite: 'none' 要設定secure: true，表示只有https連線才會傳送cookie，也需要domain
@@ -105,6 +183,7 @@ const logoutClearCookie = (res) => {
         sameSite: 'none',
         secure: true,
         domain: serverConfig.domain,
+<<<<<<< HEAD
       };
 
   // 清除cookie，登入用的accessToken
@@ -112,10 +191,20 @@ const logoutClearCookie = (res) => {
   // 清除cookie，一般的SESSION_ID
   res.clearCookie('SESSION_ID', option);
 };
+=======
+      }
+
+  // 清除cookie，登入用的accessToken
+  res.clearCookie('accessToken', option)
+  // 清除cookie，一般的SESSION_ID
+  res.clearCookie('SESSION_ID', option)
+}
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 檢查登入狀態用(GET)
 router.get('/check', authenticate, async (req, res) => {
   // 取得使用者id，從req.user.id取得(透過JWT解碼)
+<<<<<<< HEAD
   const userId = req.user.id;
 
   try {
@@ -127,15 +216,34 @@ router.get('/check', authenticate, async (req, res) => {
     errorResponse(res, error);
   }
 });
+=======
+  const userId = req.user.id
+
+  try {
+    // 取得會員所有資料，包含profile
+    const user = await getUserById(userId)
+    // 取得會員收藏清單
+    const favorites = await getUserFavorites(userId)
+    successResponse(res, { user, favorites })
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 本地端伺服器登入用
 router.post('/login', upload.none(), async (req, res) => {
   // 如果是開發環境，顯示訊息
+<<<<<<< HEAD
   if (isDev) console.log(req.body);
+=======
+  if (isDev) console.log(req.body)
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
   try {
     // 需要加上await等待取得資料
     // user是會員資料，不包含profile
+<<<<<<< HEAD
     const user = await login(req.body);
 
     // 產生存取令牌(access token)，其中包含會員資料，會回應到前端
@@ -157,10 +265,34 @@ router.post('/google-login', async function (req, res) {
   }
 
   const googleUid = uid;
+=======
+    const user = await login(req.body)
+
+    // 產生存取令牌(access token)，其中包含會員資料，會回應到前端
+    await generateAccessToken(res, user)
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+
+router.post('/google-login', async function (req, res) {
+  // 如果是開發環境，顯示訊息
+  if (isDev) console.log(req.body)
+
+  const { providerId, displayName, email, uid, photoURL } = req.body
+
+  // 檢查從react來的資料
+  if (!providerId || !uid) {
+    return errorResponse(res, { message: '缺少google登入資料' })
+  }
+
+  const googleUid = uid
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
   try {
     // 查詢資料庫是否有同email的會員資料
     // const emailUser = await getUserByEmail(email)
+<<<<<<< HEAD
     const emailUser = await getUserByField({ email });
 
     // 查詢資料庫是否有同googleUid的資料
@@ -169,30 +301,53 @@ router.post('/google-login', async function (req, res) {
 
     // 最後要加到JWT的會員資料
     let user = null;
+=======
+    const emailUser = await getUserByField({ email })
+
+    // 查詢資料庫是否有同googleUid的資料
+    // const googleUidUser = await getUserByGoogleUid(googleUid)
+    const googleUidUser = await getUserByField({ googleUid })
+
+    // 最後要加到JWT的會員資料
+    let user = null
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
     // 特殊流程: google登入時查詢到已經有同樣gmail的資料，這時要先進行更新(連結)後再登入
     // 有emailUser，但沒有googleUidUser  ==> 進行更新googleUid ==> 登入
     if (!googleUidUser && emailUser) {
       // user = await updateUserGoogleUidByEmail(email, googleUid)
+<<<<<<< HEAD
       user = await updateUserDataByField({ email }, { googleUid });
+=======
+      user = await updateUserDataByField({ email }, { googleUid })
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     }
 
     // 兩者都有存在(代表是有已存在的會員) -> 登入
     if (googleUidUser && emailUser) {
+<<<<<<< HEAD
       user = googleUidUser;
+=======
+      user = googleUidUser
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     }
 
     // 兩者都不存在 -> 建立一個新會員資料(無帳號與密碼) -> 登入
     if (!googleUidUser && !emailUser) {
       const newUser = {
         // 用googleUid當帳號(因為帳號是必要的，這裡不會用到)
+<<<<<<< HEAD
         account: String(googleUid),
+=======
+        username: String(googleUid),
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         name: displayName,
         // 用亂數產生密碼(因為密碼是必要的，這裡不會用到)，長度20
         password: crypto.randomBytes(10).toString('hex'),
         email: email,
         googleUid,
         avatar: photoURL,
+<<<<<<< HEAD
       };
 
       // 新增會員資料
@@ -207,10 +362,27 @@ router.post('/google-login', async function (req, res) {
     errorResponse(res, error);
   }
 });
+=======
+      }
+
+      // 新增會員資料
+      user = await createUser(newUser)
+    }
+
+    if (isDev) console.log('user', user)
+
+    // 產生存取令牌(access token)，其中包含會員資料，會回應到前端
+    await generateAccessToken(res, user)
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 本地端伺服器登出用
 router.post('/logout', authenticate, async (req, res) => {
   // 清除cookie
+<<<<<<< HEAD
   logoutClearCookie(res);
 
   // 回應，不回傳資料
@@ -220,11 +392,23 @@ router.post('/logout', authenticate, async (req, res) => {
 // #region ------------ 以下為Line Login路由 ------------
 // 此api路由為產生登入網址，傳回前端後，要自己導向line網站進行登入
 router.get('/line-login', LineLogin.authJson());
+=======
+  logoutClearCookie(res)
+
+  // 回應，不回傳資料
+  successResponse(res)
+})
+
+// #region ------------ 以下為Line Login路由 ------------
+// 此api路由為產生登入網址，傳回前端後，要自己導向line網站進行登入
+router.get('/line-login', LineLogin.authJson())
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // line登出機制
 // TODO: 可能無法清除cookie，因為是get方式，可能會被瀏覽器忽略要改成post方式
 router.get('/line-logout', async function (req, res) {
   if (!req.query.line_uid) {
+<<<<<<< HEAD
     return res.json({ status: 'error', message: '缺少必要資料' });
   }
 
@@ -243,6 +427,26 @@ router.get('/line-logout', async function (req, res) {
   // 回應，不回傳資料
   return res.json({ status: 'success', data: null });
 });
+=======
+    return res.json({ status: 'error', message: '缺少必要資料' })
+  }
+
+  // const user = await getUserByLineUid(req.query.line_uid)
+  const user = await getUserByField({ lineUid: req.query.line_uid })
+
+  // 清除cookie
+  logoutClearCookie(res)
+
+  // https://developers.line.biz/en/docs/line-login/managing-users/#logout
+  // 登出時進行撤銷(revoke) access token
+  const result = await LineLogin.revoke_access_token(user.lineAccessToken)
+
+  if (isDev) console.log('line-logout result:', result)
+
+  // 回應，不回傳資料
+  return res.json({ status: 'success', data: null })
+})
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // 此api路由為line登入後，從前端(react/next)callback的對應路由頁面，即真正登入處理路由
 router.get(
@@ -250,21 +454,35 @@ router.get(
   LineLogin.callback(
     // 登入成功的回調函式 Success callback
     async (req, res, next, token_response) => {
+<<<<<<< HEAD
       if (isDev) console.log(token_response);
+=======
+      if (isDev) console.log(token_response)
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
       // 以下流程:
       // 1. 先查詢資料庫是否有同line_uid的資料
       // 2-1. 有存在 -> 執行登入工作
       // 2-2. 不存在 -> 建立一個新會員資料(無帳號與密碼)，只有line來的資料 -> 執行登入工作
 
+<<<<<<< HEAD
       const lineUid = token_response.id_token.sub;
+=======
+      const lineUid = token_response.id_token.sub
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
       try {
         // 1. 先查詢資料庫是否有同line_uid的資料
         // const lineUidUser = await getUserByLineUid(lineUid)
+<<<<<<< HEAD
         const lineUidUser = await getUserByField({ lineUid });
 
         let user = null;
+=======
+        const lineUidUser = await getUserByField({ lineUid })
+
+        let user = null
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         // 2-1. 有存在 -> 更新line的access token ==> 執行登入工作
         if (lineUidUser) {
           // 更新line的access token
@@ -275,12 +493,20 @@ router.get(
           user = await updateUserDataByField(
             { lineUid },
             { lineAccessToken: token_response.access_token }
+<<<<<<< HEAD
           );
+=======
+          )
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         } else {
           // 2-2. 不存在 -> 建立一個新會員資料，只有line來的資料 -> 執行登入工作
           const newUser = {
             // 用LineUid當帳號(因為帳號是必要的，這裡不會用到)
+<<<<<<< HEAD
             account: String(lineUid),
+=======
+            username: String(lineUid),
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             // 用亂數產生密碼(因為密碼是必要的，這裡不會用到)，長度20
             password: crypto.randomBytes(10).toString('hex'),
             // 因為line登入要得到email，必須額外申請，所以這裡只作展示用，以亂數產生，參考:
@@ -290,6 +516,7 @@ router.get(
             lineUid: token_response.id_token.sub,
             lineAccessToken: token_response.access_token,
             avatar: token_response.id_token.picture,
+<<<<<<< HEAD
           };
 
           // 新增會員資料
@@ -302,28 +529,58 @@ router.get(
         await generateAccessToken(res, user);
       } catch (error) {
         errorResponse(res, error);
+=======
+          }
+
+          // 新增會員資料
+          user = await createUser(newUser)
+        }
+
+        if (isDev) console.log('user', user)
+
+        // 產生存取令牌(access token)，其中包含會員資料，會回應到前端
+        await generateAccessToken(res, user)
+      } catch (error) {
+        errorResponse(res, error)
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
       }
     },
     // 登入失敗的回調函式 Failure callback
     (req, res, next, error) => {
+<<<<<<< HEAD
       if (isDev) console.log(error);
       errorResponse(res, error);
     }
   )
 );
+=======
+      if (isDev) console.log(error)
+      errorResponse(res, error)
+    }
+  )
+)
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // #endregion ------------ 以上為Line Login路由 ------------
 
 // #region ------------ 以下為OTP路由 ------------
 // 產生一筆otp
 router.post('/otp', upload.none(), async (req, res) => {
+<<<<<<< HEAD
   const { email } = req.body;
 
   if (!email) {
     return errorResponse(res, { message: '缺少必要資料' });
+=======
+  const { email } = req.body
+
+  if (!email) {
+    return errorResponse(res, { message: '缺少必要資料' })
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
   }
 
   try {
     // 檢查此email是否存在
+<<<<<<< HEAD
     const user = await getUserByField({ email });
 
     if (!user) {
@@ -356,6 +613,40 @@ router.post('/otp', upload.none(), async (req, res) => {
     const otp = await createOtp(email, token, hash, expiredAt);
 
     if (isDev) console.log('db:otp:', otp);
+=======
+    const user = await getUserByField({ email })
+
+    if (!user) {
+      return errorResponse(res, { message: '使用者不存在' })
+    }
+
+    // 檢查是否有未過期的otp
+    const hasUnexpiredOtp = await hasUnexpiredOtpByEmail(email)
+
+    if (hasUnexpiredOtp) {
+      return errorResponse(res, { message: '有尚未過期的otp，請稍後再試。' })
+    }
+
+    // 產生一筆新的totp
+    const newOtp = generateToken(email)
+    // 30 秒後會重新改變
+    const second =
+      newOtp.totp.period - (Math.floor(Date.now() / 1000) % newOtp.totp.period)
+
+    // 預設 5 分鐘過期(5 * 60 * 1000)
+    const exp = Date.now() + otpExpire
+    // otp token
+    const token = newOtp.token
+
+    // 產生一個隨機hash
+    const hash = crypto.randomBytes(10).toString('hex')
+    // 過期時間(日期物件)
+    const expiredAt = new Date(exp)
+    // 資料庫建立一筆otp
+    const otp = await createOtp(email, token, hash, expiredAt)
+
+    if (isDev) console.log('db:otp:', otp)
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
     // 將otp資料存入session
     req.session.otp = {
@@ -365,6 +656,7 @@ router.post('/otp', upload.none(), async (req, res) => {
       uri: newOtp.uri, // 產生的 uri
       changeAt: Date.now() + second * 1000, // 30 秒後會重新改變
       exp: exp, // 過期時間，毫秒值
+<<<<<<< HEAD
     };
 
     // 寄送otp信件(注意這個操作會耗時)
@@ -472,3 +764,112 @@ router.post('/check-secret', async (req, res) => {
 // #endregion ------------ 以上為OTP路由 ------------
 
 export default router;
+=======
+    }
+
+    // 寄送otp信件(注意這個操作會耗時)
+    await sendOtpMail(email, token, hash)
+
+    if (isDev) console.log('final: req.session.otp:', req.session.otp)
+
+    // 傳送otp回應，回應hash資料
+    successResponse(res, { hashToken: hash })
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+
+// 重設密碼用(透過email)
+router.post('/reset-password', async (req, res) => {
+  const { email, token, password } = req.body
+
+  if (!token || !email || !password) {
+    return res.json({ status: 'error', message: '缺少必要資料' })
+  }
+
+  try {
+    const isValid = await verifyOtp(email, token)
+
+    if (!isValid) {
+      return errorResponse(res, { message: '驗証碼錯誤' })
+    }
+
+    // 重設密碼(注意這裡面除了會執行更新密碼外，在更新後也會刪除otp資料)
+    await resetPassword(email, password)
+
+    // 清除session資料
+    req.session.destroy()
+
+    // 清除cookie
+    logoutClearCookie(res)
+
+    // 成功
+    successResponse(res)
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+
+// 重設密碼用(透過hash，不用email)
+router.post('/reset-password-hash', async (req, res) => {
+  const { secret, token, password } = req.body
+
+  isDev && console.log('req.body:', req.body)
+  isDev && console.log('req.session.otp:', req.session.otp)
+
+  if (!token || !secret || !password) {
+    return errorResponse(res, { message: '缺少必要資料' })
+  }
+
+  if (req.session?.otp?.hash !== secret) {
+    return errorResponse(res, { message: '驗証安全字串錯誤' })
+  }
+
+  // 從session中取得email
+  const email = req.session.otp.email
+
+  try {
+    const isValid = await verifyOtp(email, token)
+
+    if (!isValid) {
+      return errorResponse(res, { message: '驗証碼錯誤' })
+    }
+
+    // 重設密碼(注意這裡面除了會執行更新密碼外，在更新後也會刪除otp資料)
+    await resetPassword(email, password)
+
+    // 清除session資料
+    req.session.destroy()
+
+    // 清除cookie
+    logoutClearCookie(res)
+
+    // 成功
+    successResponse(res)
+  } catch (error) {
+    errorResponse(res, error)
+  }
+})
+
+// 重設密碼用(透過hash，不用email)
+router.post('/check-secret', async (req, res) => {
+  const { secret } = req.body
+
+  isDev && console.log('req.body:', req.body)
+  isDev && console.log('req.session.otp:', req.session.otp)
+
+  if (!secret) {
+    return errorResponse(res, { message: '缺少必要資料' })
+  }
+
+  if (req.session?.otp?.hash !== secret) {
+    return errorResponse(res, { message: '驗証安全字串錯誤' })
+  }
+
+  // 成功
+  successResponse(res)
+})
+// #endregion ------------ 以上為OTP路由 ------------
+
+export default router
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c

@@ -86,6 +86,7 @@ body {
       height: 0;
     }
   }
+<<<<<<< HEAD
   @keyframes marquee {
     0% {
       transform: translateX(100%);
@@ -95,6 +96,8 @@ body {
     }
   }
 
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
   /* 設定對應的 animate-* 變數 */
   --animate-expand: slideDown 300ms ease-out;
   --animate-collapse: slideUp 300ms ease-out;
@@ -226,6 +229,7 @@ body {
   --swiper-navigation-color: #404040; /* 左右箭頭 */
   --swiper-pagination-color: #404040; /* bullet 或 fraction */
 }
+<<<<<<< HEAD
 
 /* 錯誤訊息樣式 */
 @layer components {
@@ -236,3 +240,5 @@ body {
            block;
   }
 }
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c

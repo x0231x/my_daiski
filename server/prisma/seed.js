@@ -38,7 +38,10 @@ const oneToMany = [
   'Order:OrderGroup',
   'Coach:LanguageCoach',
   'Coach:LicenseCoach',
+<<<<<<< HEAD
   'Course:CourseVariant',
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
   'CouponType:Coupon',
   'CouponTarget:Coupon',
   'User:GameScore',
@@ -54,7 +57,11 @@ const seedsFolder = 'seeds';
 // 需要先轉換為bcrypt編碼的欄位名稱 create bcrypt password hash
 const bcryptFields = ['password'];
 // 需要先轉換為日期的欄位名稱 date format fields
+<<<<<<< HEAD
 const dateFields = ['birth', 'startDate', 'endDate'];
+=======
+const dateFields = ['birth','startDate', 'endDate'];
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 // convert CamelCase to camelCase for Prisma modelName
 function convertToCamelCase(str) {

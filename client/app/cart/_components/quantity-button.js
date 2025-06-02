@@ -1,6 +1,7 @@
 'use client';
 import { produce } from 'immer';
 import { useEffect } from 'react';
+<<<<<<< HEAD
 import { useCart } from '@/hooks/use-cart';
 import { CloudCog } from 'lucide-react';
 import Delete from './delete-button';
@@ -73,14 +74,63 @@ export default function QuantityButton({
           //     size: updatedItem.size,
           //   });
           // }
+=======
+
+export default function QuantityButton({
+  productId = 0,
+  data = '',
+  setData = () => {},
+  type = '',
+}) {
+  const url = `http://localhost:3005/api/cart/${productId}`;
+  async function fetchData(nextCart) {
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: nextCart,
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return (
+    <>
+      <button
+        className="w-[50]"
+        onClick={() => {
+          const nextCart = produce(data, (draft) => {
+            draft.cart.CartProduct.map((product) => {
+              if (productId === product.productId) {
+                type === 'minus' ? product.quantity-- : product.quantity++;
+              }
+            });
+          });
+          setData(nextCart);
+          fetchData(nextCart);
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         }}
       >
         {/* FIXME -號要加大*/}
         <div>
+<<<<<<< HEAD
           <p className="text-center text-h6-tw">{type === 'minus' && '-'}</p>
           <p className="text-center">{type === 'plus' && '+'}</p>
         </div>
       </Button>
+=======
+          <p className="text-h6-tw ">{type === 'minus' && '-'}</p>
+        </div>
+        <div>
+          <p className="text-h6-tw">{type === 'plus' && '+'}</p>
+        </div>
+      </button>
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     </>
   );
 }

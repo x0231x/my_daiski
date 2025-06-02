@@ -1,6 +1,9 @@
 import express from 'express';
 import prisma from '../../lib/prisma.js';
+<<<<<<< HEAD
 import authenticate from '../../middlewares/authenticate.js';
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 const router = express.Router();
 
@@ -12,6 +15,7 @@ const router = express.Router();
 // });
 
 // 查詢
+<<<<<<< HEAD
 router.get('/', authenticate, async function (req, res) {
   try {
     const userId = req.user.id;
@@ -217,4 +221,32 @@ app.use(express.json());
 
 // 這行要確保 router 的路徑跟你呼叫一致
 app.use('/api', router);
+=======
+router.get('/', async function (req, res) {
+  const coupon = await prisma.coupon.findMany({
+    select: {
+      // 想顯示的 scalar 欄位
+      name: true,
+      startAt: true,
+      endAt: true,
+      usageLimit: true,
+      minPurchase: true,
+      // 關聯欄位也放進 select
+      couponType: {
+        select: {
+          type: true,
+          amount: true,
+        },
+      },
+    },
+  });
+  const flattened = coupon.map(({ couponType, ...rest }) => ({
+    ...rest,
+    ...couponType,
+  }));
+
+  res.status(200).json({ status: 'success', flattened });
+});
+
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 export default router;

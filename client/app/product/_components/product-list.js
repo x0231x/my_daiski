@@ -127,7 +127,10 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import Image from 'next/image';
+<<<<<<< HEAD
 import FavoriteButton from '@/components/favorite-button';
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 export default function ProductList({
   products,
@@ -201,6 +204,7 @@ export default function ProductList({
           viewport={{ once: true, amount: 0.2 }}
           className="relative"
         >
+<<<<<<< HEAD
           {/* 收藏按鈕 */}
           <div className="absolute top-2 right-2 z-10">
             {' '}
@@ -302,6 +306,36 @@ export default function ProductList({
                 </CardFooter>
               </Card>
             </motion.div>
+=======
+          <Link href={`/product/${p.id}`}>
+            <Card>
+              <CardHeader className="w-full aspect-[4/3] overflow-hidden rounded-xl">
+                <Image
+                  src={p.image || '/placeholder.jpg'}
+                  alt={p.name}
+                  width={10}
+                  height={10}
+                  className="w-full h-full object-cover transition duration-300 hover:scale-110"
+                />
+              </CardHeader>
+              <CardContent>
+                <CardTitle className="text-lg font-bold mt-2 line-clamp-2 hover:text-primary-500">
+                  {p.name}
+                </CardTitle>
+                <CardDescription className="text-sm text-gray-600 mt-1 line-clamp-1 hover:text-primary-500">
+                  {p.category} / {p.brand}
+                </CardDescription>
+                <p className="text-red-500 font-semibold text-base mt-2">
+                  ${p.price}
+                </p>
+              </CardContent>
+              <CardFooter>
+                <p className="text-sm text-gray-500">
+                  評價：{p.rating || '尚無評價'}
+                </p>
+              </CardFooter>
+            </Card>
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           </Link>
         </motion.li>
       ))}

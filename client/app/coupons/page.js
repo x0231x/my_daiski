@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import CouponCard from './_components/coupon-card';
 import Container from '@/components/container';
+<<<<<<< HEAD
 import CouponSelected from './_components/coupon-selected';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
@@ -13,6 +14,8 @@ import useSWR from 'swr';
 // import useSWRMutation from 'swr/dist/mutation';
 import useSWRMutation from 'swr/mutation';
 import { mutate } from 'swr';
+=======
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 export default function CouponsPage(props) {
   // 在 useSWR 呼叫時，就直接傳 inline fetcher
@@ -179,6 +182,7 @@ export default function CouponsPage(props) {
           {/* 開頭 */}
           <div className="flex flex-row items-center justify-between">
             <h5 className="font-tw text-h5-tw">領取優惠劵</h5>
+<<<<<<< HEAD
             <a
               href="http://localhost:3000/profile"
               className="font-tw leading-p-tw cursor-pointer hover:underline decoration-red decoration-2 underline-offset-4 "
@@ -199,10 +203,21 @@ export default function CouponsPage(props) {
             >
               一鍵領取優惠劵
             </button>
+=======
+            <p className="font-tw leading-p-tw">我的優惠劵</p>
+          </div>
+
+          {/* 領取 */}
+          <div className="border border-primary-600 w-full flex flex-row p-5 items-center justify-around">
+            <button className="font-tw leading-p-tw">輸入優惠劵序號</button>
+            <div className="h-4 w-px border-l-2 border-secondary-800"></div>
+            <button className="font-tw leading-p-tw">一件領取優惠劵</button>
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           </div>
 
           {/* 分類 */}
           <div className="flex flex-row gap-6">
+<<<<<<< HEAD
             {targets.map((target) => {
               return (
                 <CouponSelected
@@ -216,10 +231,23 @@ export default function CouponsPage(props) {
             })}
           </div>
 
+=======
+            <button className="font-tw leading-p-tw hover:underline decoration-red decoration-2 underline-offset-4">
+              全部
+            </button>
+            <button className="font-tw leading-p-tw hover:underline decoration-red decoration-2 underline-offset-4">
+              課程
+            </button>
+            <button className="font-tw leading-p-tw hover:underline decoration-red decoration-2 underline-offset-4">
+              商品
+            </button>
+          </div>
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           <hr />
         </section>
 
         {/* 優惠劵 */}
+<<<<<<< HEAD
         {filteredData.length === 0 ? (
           <div className="flex flex-col justify-center items-center mt-15">
             <Image src="/coupon.png" alt="沒卷" width={140} height={113} />
@@ -284,6 +312,15 @@ export default function CouponsPage(props) {
         )}
       </Container>
       <Toaster position="bottom-right" richColors />
+=======
+        <section className="grid grid-cols-1 justify-items-center gap-x-25 gap-y-6 lg:grid-cols-2 my-10">
+          <CouponCard />
+          <CouponCard />
+          <CouponCard />
+          <CouponCard />
+        </section>
+      </Container>
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     </>
   );
 }

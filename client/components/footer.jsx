@@ -187,7 +187,11 @@ export default function Footer() {
         <Accordion type="single" collapsible className="w-full space-y-4">
           {/* 關於 DAISKI */}
           <AccordionItem value="about-daiski">
+<<<<<<< HEAD
             <AccordionTrigger className="font-medium text-2xl cursor-none">
+=======
+            <AccordionTrigger className="font-medium text-2xl cursor-pointer">
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
               關於DAISKI
             </AccordionTrigger>
             <AccordionContent className="pt-2">
@@ -228,7 +232,11 @@ export default function Footer() {
 
           {/* 顧客權益 */}
           <AccordionItem value="customer-rights">
+<<<<<<< HEAD
             <AccordionTrigger className="font-medium text-2xl cursor-none">
+=======
+            <AccordionTrigger className="font-medium text-2xl cursor-pointer">
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
               顧客權益
             </AccordionTrigger>
             <AccordionContent className="pt-2">
@@ -269,7 +277,11 @@ export default function Footer() {
 
           {/* 其他服務 */}
           <AccordionItem value="other-services">
+<<<<<<< HEAD
             <AccordionTrigger className="font-medium text-2xl cursor-none">
+=======
+            <AccordionTrigger className="font-medium text-2xl cursor-pointer">
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
               其他服務
             </AccordionTrigger>
             <AccordionContent className="pt-2">
@@ -295,7 +307,11 @@ export default function Footer() {
 
           {/* 企業合作 */}
           <AccordionItem value="corporate-partnership">
+<<<<<<< HEAD
             <AccordionTrigger className="font-medium text-2xl cursor-none">
+=======
+            <AccordionTrigger className="font-medium text-2xl cursor-pointer">
+>>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
               企業合作
             </AccordionTrigger>
             <AccordionContent className="pt-2">
