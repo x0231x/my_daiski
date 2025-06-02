@@ -1,6 +1,6 @@
-import 'dotenv/config.js'
+import 'dotenv/config.js';
 
-const env = process.env.NODE_ENV || 'development'
+const env = process.env.NODE_ENV || 'development';
 
 export const serverConfig = {
   // 如果要使用redis session store類型，必需要在 .env 檔案中設定 REDIS_URL
@@ -37,23 +37,24 @@ export const serverConfig = {
   // local development
   lineLogin: {
     development: {
-      channelId: '123456789',
-      channelSecret: 'xxxxxxxxxxxx',
-      callbackUrl: 'http://localhost:3000/user/line-login',
+      // channelId: '123456789',
+      channelId: 'test_202505205525@line.pay',
+      channelSecret: 'i$82EeEnff',
+      callbackUrl: 'http://localhost:3000/line-login',
     },
     production: {
       channelId: '',
       channelSecret: '',
-      callbackUrl: 'https://xxxxx.vercel.app/user/line-login',
+      callbackUrl: 'https://xxxxx.vercel.app/line-login',
     },
   },
   // 前端接回導向的網址
   ship711: {
     development: {
-      callbackUrl: 'http://localhost:3000/ship/callback',
+      callbackUrl: 'http://localhost:3000/cart/checkout/callback',
     },
     production: {
-      callbackUrl: 'https://xxxxx.vercel.app/ship/callback',
+      callbackUrl: 'https://xxxxx.vercel.app/cart/checkout/callback',
     },
   },
   linePay: {
@@ -80,4 +81,4 @@ export const serverConfig = {
   //   clientOrderResultUrl: 'http://localhost:3005/api/ecpay/result',
   //   orderCallbackUrl: 'http://localhost:3000/test/ecpay/callback',
   // },
-}
+};

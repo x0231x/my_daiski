@@ -1,57 +1,81 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import Process from './_components/process';
 import Checkout from './_components/checkout';
 
-import { useGet } from '@/hooks/use-get';
+import Coupon from './_components/coupon';
 
-import { Trash2 } from 'lucide-react';
-// secondary
-export default function CartPage(props) {
-  const url = 'http://localhost:3005/api/cart';
-  const { data, loading, error } = useGet(url);
-  const cart = data ? data.data.cart : [];
-  const products = cart?.CartProduct ? cart.CartProduct : [];
-  const groups = cart?.CartGroup ? cart.CartGroup : [];
-  const course = cart?.CartCourse ? cart.CartCourse : [];
-  if (loading) {
-    return <p>載入中</p>;
-  }
+import CartItemList from './_components/cartItemList';
 
-  return (
-    <>
-      <div className="container mx-auto  ">
-        <h3 className="text-h3-tw text-primary-600">CART | 購物車 </h3>
+import { useAuth } from '@/hooks/use-auth';
+import { useCart } from '@/hooks/use-cart';
+
+export default function CartPage({ setProcess }) {
+  const { user, isAuth, isLoading } = useAuth();
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const url = 'http://localhost:3005/api/cart';
+  //       const res = await fetch(url, { credentials: 'include' });
+  //       const json = await res.json();
+  //       setData(json);
+  //       setLoading(false);
+  //     } catch (err) {
+  //       setError(err);
+  //       setLoading(false);
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
+
+  // const groups = data?.data.cart.CartGroup ? cart.CartGroup : [];
+  // FIXME收藏未做
+  //   // 定義收藏用狀態
+  // const [wishList, setWishList] = useState(false)
+  // // 處理收藏布林值切換(toggle)
+  // const onToggleWish = (wishList) => {
+  //   const nextWishList = books.map((v, i) => {
+  //     if (v.isbn === wishList) {
+  //       // 如果比對出isbn=bookIsbn的成員，則進行再拷貝物件，並且作修改`bookmark: !v.bookmark`
+  //       return { ...v, wishList: !v.wishList }
+  //     } else {
+  //       // 否則回傳原本物件
+  //       return v
+  //     }
+  //   })
+  //   // 3 設定到狀態
+  //   setBooks(wishList)
+  // }
+
+  // 以上測試區
+  // if (loading) {
+  // return <p>載入中</p>;
+  // }
+
+  if (isAuth) {
+    return (
+      <>
         <Process step="1"></Process>
-        <div className="flex justify-between">
-          <div className="w-full">
-            <div className="border-b-5 border-secondary-500">
-              <h6 className="text-h6-tw">商品內容</h6>
-            </div>
-
-            {products.map((product, i) => {
-              return (
-                <div key={product.productId} className="flex justify-between">
-                  <div className="flex justify-center w-full">
-                    <p>{product.productId}</p>
-                  </div>
-                  <div className="flex justify-center w-full">
-                    <p>{product.quantity}</p>
-                  </div>
-                  <div className="flex justify-center w-full">
-                    <div>收藏</div>
-                    <div className="flex justify-center">
-                      <Trash2></Trash2>刪除
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        <div className="flex justify-between md:gap-6  ">
+          <div className="flex flex-col w-full gap-6 min-w-0 justify-center item-center">
+            <CartItemList
+              key="CartProduct"
+              category="CartProduct"
+            ></CartItemList>
+            <CartItemList key="CartCourse" category="CartCourse"></CartItemList>
+            <CartItemList key="CartGroup" category="CartGroup"></CartItemList>
+            <Coupon></Coupon>
           </div>
-          <Checkout></Checkout>
+          <div className="">
+            <Checkout></Checkout>
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  } else {
+    return <>請先登入</>;
+  }
 }

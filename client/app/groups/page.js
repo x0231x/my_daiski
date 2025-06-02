@@ -1,521 +1,356 @@
+// app/groups/page.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
+import Link from 'next/link';
+import { CirclePlus, BadgeCheck, Megaphone } from 'lucide-react';
+// 引入 Framer Motion
+// 1. 安裝: npm install framer-motion 或 yarn add framer-motion
+import { motion } from 'framer-motion';
 
-export default function CoursesPage(props) {
+export default function GroupsPage() {
+  const router = useRouter();
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3005';
+
+  const [groupStats, setGroupStats] = useState({
+    total: 0,
+    ongoing: 0,
+    formed: 0,
+  });
+  const [latestGroups, setLatestGroups] = useState([]);
+  const [loadingLatest, setLoadingLatest] = useState(true);
+
+  // Framer Motion 不需要像 AOS 那樣在 useEffect 中初始化
+  // 動畫直接在 JSX 中的 motion 組件上定義
+
+  useEffect(() => {
+    async function fetchGroupStats() {
+      try {
+        const statsRes = await fetch(`${API_BASE}/api/group/summary`);
+        if (!statsRes.ok) throw new Error('無法獲取揪團統計數據');
+        const statsData = await statsRes.json();
+        setGroupStats({
+          total: statsData.totalGroups || 0,
+          ongoing: statsData.ongoingGroups || 0,
+          formed: statsData.formedGroups || 0,
+        });
+      } catch (err) {
+        console.error('載入揪團統計數據失敗:', err);
+        setGroupStats({ total: 0, ongoing: 0, formed: 0 });
+      }
+    }
+    async function fetchLatestGroups() {
+      try {
+        const res = await fetch(`${API_BASE}/api/group/latest`);
+        if (!res.ok) throw new Error('無法獲取最新揪團列表');
+        const data = await res.json();
+        setLatestGroups(data);
+      } catch (err) {
+        console.error('獲取最新揪團列表失敗:', err);
+        setLatestGroups([]);
+      } finally {
+        setLoadingLatest(false);
+      }
+    }
+    fetchGroupStats();
+    fetchLatestGroups();
+  }, [API_BASE]);
+
+  // 定義一個通用的滑入動畫變體
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: false, amount: 0.3 }, // amount: 0.3 表示元素可見30%時觸發
+    transition: { duration: 0.6, ease: 'easeInOut' },
+  };
+  const fadeInRight = {
+    initial: { opacity: 0, x: -60 },
+    whileInView: { opacity: 1, x: 0 },
+    viewport: { once: false, amount: 0.3 },
+    transition: { duration: 0.6, ease: 'easeInOut' },
+  };
+  const fadeInLeft = {
+    initial: { opacity: 0, x: 60 },
+    whileInView: { opacity: 1, x: 0 },
+    viewport: { once: false, amount: 0.3 },
+    transition: { duration: 0.6, ease: 'easeInOut' },
+  };
+
   return (
     <>
-      <>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Daiski 揪團總覽</title>
-        <style
-          dangerouslySetInnerHTML={{
-            __html:
-              '\n    @keyframes marquee {\n      0% {\n        transform: translateX(100%);\n      }\n\n      100% {\n        transform: translateX(-100%);\n      }\n    }\n\n    .animate-marquee {\n      animation: marquee 20s linear infinite;\n    }\n    .pause:hover {\n    animation-play-state: paused;\n  }\n  ',
-          }}
+      {/* 跑馬燈 Section */}
+      <section className="bg-secondary-200 dark:bg-slate-800 py-3 shadow-md">
+        <div className="relative overflow-hidden max-w-screen-xl mx-auto">
+          <div className="whitespace-nowrap animate-marquee pause text-primary-800 dark:text-white text-sm font-medium flex items-center gap-6 px-4">
+            <span>🏂 現正招募中：北海道出國團</span>
+            <span>⛷️ 苗場初學教學團</span>
+            <span>🎿 富良野自由行！</span>
+            <span>📅 官方協助排課中</span>
+            <span className="pl-6">🏂 現正招募中：北海道出國團</span>
+            <span>⛷️ 苗場初學教學團</span>
+            <span>🎿 富良野自由行！</span>
+            <span>📅 官方協助排課中</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Hero Section with Video */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden">
+        <video
+          className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+          src="/ProductHeroSection.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
         />
-        {/* Hero Banner */}
-        <section
-          className="relative bg-cover bg-[center_80%] bg-no-repeat py-36 text-center"
-          style={{
-            backgroundImage:
-              'url("./26852e04-a393-422d-bd61-8042373024da.png")',
-          }}
+        <div className="absolute inset-0 bg-black/60 -z-10" />
+        <motion.div
+          className="relative z-10 max-w-3xl mx-auto px-4 py-20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }} // Hero 區塊通常是立即顯示，所以用 animate 而非 whileInView
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="absolute inset-0 bg-slate-800/30 backdrop-blur-[0.5px]" />
-          <div className="relative z-10 max-w-3xl mx-auto px-7 py-14 bg-white/80 backdrop-blur-md shadow-2xl">
-            <h2 className="text-5xl font-extrabold text-[#003049] mb-6 tracking-wider leading-snug">
-              找人開團滑雪，一起嗨翻雪場！
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-              不論是自由行或是想體驗教學，歡迎發起屬於你的行程，官方協助安排課程與教練，讓旅程更加完美！
-            </p>
-            <div className="flex justify-center gap-6">
-              <a
-                href="./group-detail.html"
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition transform hover:scale-105"
+          <h1 className="text-h4-tw sm:text-h2-tw md:text-h2-tw font-bold text-white mb-6 leading-tight">
+            找人開團滑雪，
+            <br className="sm:hidden" />
+            一起嗨翻雪場！
+          </h1>
+          <p className="mt-4 text-h6-tw sm:text-h6-tw text-white/90 mb-8 max-w-xl mx-auto">
+            不論是自由行或是想體驗教學，歡迎發起屬於你的行程，官方協助安排課程與教練，讓旅程更加完美！
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+            <motion.div
+              initial={fadeInRight.initial}
+              whileInView={fadeInRight.whileInView}
+              viewport={fadeInRight.viewport}
+              transition={{ ...fadeInRight.transition, delay: 0.3 }}
+            >
+              <Button
+                onClick={() => router.push('/groups/create')}
+                size="lg"
+                className="px-10 py-6 bg-primary-500 hover:bg-primary-600 text-white text-[1.25rem] font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
               >
                 立即開團
-              </a>
-              <a
-                href="#"
-                className="px-6 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold transition transform hover:scale-105"
+              </Button>
+            </motion.div>
+            <motion.div
+              initial={fadeInLeft.initial}
+              whileInView={fadeInLeft.whileInView}
+              viewport={fadeInLeft.viewport}
+              transition={{ ...fadeInLeft.transition, delay: 0.4 }}
+            >
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => router.push('/groups/list')}
+                className="px-10 py-6 text-black text-[1.25rem] dark:bg-white dark:text-black border-white hover:bg-white hover:text-slate-900 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
               >
-                查看開團
-              </a>
+                查看揪團
+              </Button>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* 統計卡片 - 浮動疊加樣式 */}
+      <motion.div
+        className="relative z-20 -mt-24 sm:-mt-28 md:-mt-20 flex justify-center px-4"
+        initial={fadeInUp.initial}
+        whileInView={fadeInUp.whileInView}
+        viewport={fadeInUp.viewport}
+        transition={{ ...fadeInUp.transition, duration: 1 }} // 可以為特定元素調整動畫時長
+      >
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-800 shadow-2xl rounded-xl p-8 sm:p-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x sm:divide-border dark:sm:divide-border text-center">
+            <div className="px-4">
+              <p className="text-h4-tw sm:text-h3-tw md:text-h2-tw font-bold text-primary-500 dark:text-primary transition-all duration-300 hover:scale-110">
+                {groupStats.total}
+              </p>
+              <p className="text-sm sm:text-p-tw md:text-p-tw text-secondary-800 dark:text-muted-foreground mt-2">
+                總揪團
+              </p>
+            </div>
+            <div className="px-4">
+              <p className="text-h4-tw sm:text-h3-tw md:text-h2-tw font-bold text-primary-500 dark:text-primary transition-all duration-300 hover:scale-110">
+                {groupStats.ongoing}
+              </p>
+              <p className="text-sm sm:text-p-tw md:text-p-tw text-secondary-800 dark:text-muted-foreground mt-2">
+                揪團中
+              </p>
+            </div>
+            <div className="px-4">
+              <p className="text-h4-tw sm:text-h3-tw md:text-h2-tw font-bold text-primary-500 dark:text-primary transition-all duration-300 hover:scale-110">
+                {groupStats.formed}
+              </p>
+              <p className="text-sm sm:text-p-tw md:text-p-tw text-secondary-800 dark:text-muted-foreground mt-2">
+                已成團
+              </p>
             </div>
           </div>
-        </section>
-        {/* 跑馬燈 */}
-        <section className="bg-sky-100 py-3">
-          <div className="relative overflow-hidden max-w-screen-xl mx-auto">
-            <div className="whitespace-nowrap animate-marquee pause text-sky-800 text-base font-medium flex items-center gap-4">
-              <span>🏂 現正招募中：北海道出國團</span>
-              <span>⛷️ 苗場初學教學團</span>
-              <span>🎿 富良野自由行！</span>
-              <span>📅 官方協助排課中</span>
-            </div>
-          </div>
-        </section>
-        {/* Filter Section */}
-        <section className="max-w-screen-xl mx-auto px-6 py-8">
-          <form className="grid grid-cols-1 md:grid-cols-5 gap-6 bg-white py-6 px-6 shadow-md">
-            <div>
-              <label className="block text-sm font-medium mb-2">類型</label>
-              <select className="border px-3 py-2 w-full">
-                <option>全部</option>
-                <option>出國團</option>
-                <option>單日滑</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">日期</label>
-              <input type="date" className="border px-3 py-2 w-full" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">地點</label>
-              <select className="border px-3 py-2 w-full">
-                <option>全部</option>
-                <option>二世谷</option>
-                <option>苗場</option>
-              </select>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2">
-                關鍵字搜尋
-              </label>
-              <input
-                type="text"
-                placeholder="輸入關鍵字..."
-                className="border px-3 py-2 w-full"
-              />
-            </div>
-          </form>
-        </section>
-        {/* Card Grid */}
-        <section className="max-w-screen-2xl mx-auto px-4 pb-24">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 範例 Start */}
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Card 範例 End */}
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-white shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              {/* 斜邊漸層底色 */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-100 to-white clip-path-[polygon(0_0,100%_5%,100%_95%,0_100%)]"></div>
-              {/* 圖片區塊 */}
-              <div
-                className="h-52 bg-cover bg-center"
-                style={{ backgroundImage: 'url("./image_1.jpg")' }}
-              />
-              {/* 內容 */}
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-208px)]">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://i.pravatar.cc/40?u=123"
-                        alt="開團者"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          開團者：小雪人
-                        </p>
-                      </div>
-                    </div>
-                    <span className="border border-blue-600 text-blue-600 text-xs font-semibold px-2 py-1">
-                      官方協助中
-                    </span>
-                  </div>
-                  {/* 標題加左側彩色線 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 border-l-4 border-blue-600 pl-2">
-                    北海道雙板揪團出發！
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-1">
-                    二世谷｜2025/01/18 - 01/22｜出國團
-                  </p>
-                  <p className="text-sm text-gray-700 mb-1">
-                    目前人數：5 / 8 人
-                  </p>
-                  <p className="text-sm font-semibold text-red-500 mb-4">
-                    截止報名：2025/01/10
-                  </p>
-                </div>
-                {/* 行動按鈕 */}
-                <div className="flex items-center justify-between">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm underline hover:text-blue-800"
-                  >
-                    查看詳情
-                  </a>
-                  <button className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-transform duration-200 hover:scale-105">
-                    加入揪團
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* Pagination */}
-        <div className="max-w-screen-xl mx-auto px-4 py-8 flex justify-center">
-          <nav className="flex items-center space-x-4 text-sm">
-            <button className="px-2 py-1 text-gray-600 hover:text-gray-800">
-              &lt;
-            </button>
-            <button className="px-2 py-1 border-b-2 border-pink-500 text-gray-800">
-              1
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:border-b-2 hover:border-pink-500">
-              2
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:border-b-2 hover:border-pink-500">
-              3
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:border-b-2 hover:border-pink-500">
-              4
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:text-gray-800">
-              &gt;
-            </button>
-          </nav>
         </div>
-      </>
+      </motion.div>
+
+      {/* 最新揪團 Section */}
+      <section className="pt-20 sm:pt-32 md:pt-20 pb-16 md:pb-24 bg-white dark:bg-background">
+        <div className="max-w-screen-xl mx-auto px-6">
+          <motion.h2
+            className="text-h3-tw sm:text-h2-tw font-bold text-center mb-12 sm:mb-16 text-secondary-800 dark:text-foreground"
+            initial={fadeInUp.initial}
+            whileInView={fadeInUp.whileInView}
+            viewport={fadeInUp.viewport}
+            transition={fadeInUp.transition}
+          >
+            最新揪團
+          </motion.h2>
+          {loadingLatest ? (
+            <p className="text-center text-muted-foreground dark:text-muted-foreground py-10">
+              載入最新揪團中...
+            </p>
+          ) : latestGroups.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+              {latestGroups.map((group, index) => (
+                <motion.div
+                  key={group.id} // 將 key 移到 motion.div
+                  initial={fadeInUp.initial}
+                  whileInView={fadeInUp.whileInView}
+                  viewport={fadeInUp.viewport}
+                  transition={{ ...fadeInUp.transition, delay: index * 0.1 }} // 錯開動畫
+                >
+                  <Card
+                    className="p-0 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 rounded-xl flex flex-col group bg-white dark:bg-card border border-transparent hover:border-primary-500 dark:border-border dark:hover:border-primary h-full" //確保卡片等高，如果需要
+                  >
+                    <Link href={`/groups/${group.id}`} className="block">
+                      <div className="relative w-full h-56 sm:h-60">
+                        <Image
+                          src={
+                            group.imageUrl && group.imageUrl.startsWith('/')
+                              ? `${API_BASE}${group.imageUrl}`
+                              : group.imageUrl || '/deadicon.png'
+                          }
+                          alt={group.title || '揪團封面'}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          className="group-hover:scale-105 transition-transform duration-300 rounded-t-xl"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                          onError={(e) => {
+                            e.currentTarget.src = '/deadicon.png';
+                            e.currentTarget.alt = '圖片載入失敗';
+                          }}
+                        />
+                      </div>
+                    </Link>
+                    <CardContent className="p-5 flex flex-col flex-grow">
+                      <p className="text-xs font-semibold text-primary-500 dark:text-primary mb-1 uppercase tracking-wider">
+                        {group.type || '滑雪團'}
+                      </p>
+                      <h3 className="text-h6-tw font-semibold text-secondary-800 dark:text-foreground mb-2 leading-snug">
+                        {group.title}
+                      </h3>
+                      <p className="text-sm text-secondary-800 dark:text-muted-foreground mb-3 flex-grow line-clamp-3">
+                        {group.description}
+                      </p>
+                      <div className="mt-auto pt-3 border-t border-border dark:border-border/50 flex items-center justify-between text-xs text-muted-foreground dark:text-muted-foreground">
+                        <span>{group.location || '地點未定'}</span>
+                        <span>
+                          {new Date(group.startDate).toLocaleDateString(
+                            'zh-TW',
+                            {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            }
+                          )}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <motion.p
+              className="text-center text-muted-foreground dark:text-muted-foreground py-10"
+              initial={fadeInUp.initial}
+              whileInView={fadeInUp.whileInView}
+              viewport={fadeInUp.viewport}
+              transition={fadeInUp.transition}
+            >
+              目前沒有最新揪團。
+            </motion.p>
+          )}
+        </div>
+      </section>
+
+      {/* Daiski 幫你揪 Section */}
+      <section className="py-16 md:py-24 bg-secondary-200 dark:bg-background">
+        <div className="max-w-screen-lg mx-auto px-6 text-center">
+          <motion.h2
+            className="text-h3-tw sm:text-h2-tw font-bold mb-12 sm:mb-16 text-secondary-800 dark:text-foreground"
+            initial={fadeInUp.initial}
+            whileInView={fadeInUp.whileInView}
+            viewport={fadeInUp.viewport}
+            transition={fadeInUp.transition}
+          >
+            Daiski 幫你揪
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+            {[
+              {
+                icon: CirclePlus,
+                title: '免費開團',
+                description:
+                  '註冊開團完全免費，不收上架費，不限制開團數，輕鬆成為開團主。',
+                animation: fadeInRight, // 使用定義好的變體
+              },
+              {
+                icon: BadgeCheck,
+                title: '快速審核',
+                description:
+                  '開團確認上架審核機制，審核快速準確，避免揪團資訊錯誤不到位。',
+                animation: fadeInUp,
+                delay: 0.1, // 稍微延遲中間的卡片
+              },
+              {
+                icon: Megaphone,
+                title: '社群曝光',
+                description: '開團審核上架後可免費曝光，協助快速找到團員。',
+                animation: fadeInLeft,
+                delay: 0.2,
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="flex flex-col items-center p-6 sm:p-8 bg-white dark:bg-primary-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5"
+                initial={feature.animation.initial}
+                whileInView={feature.animation.whileInView}
+                viewport={feature.animation.viewport}
+                transition={{
+                  ...feature.animation.transition,
+                  delay: feature.delay || index * 0.1,
+                }}
+              >
+                <div className="p-4 bg-secondary-200 dark:bg-primary/20 rounded-full mb-5">
+                  <feature.icon
+                    className="w-10 h-10 sm:w-12 sm:h-12 text-primary-500 dark:text-primary"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <h3 className="text-h6-tw font-semibold mb-2 text-secondary-800 dark:text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-secondary-800 dark:text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
