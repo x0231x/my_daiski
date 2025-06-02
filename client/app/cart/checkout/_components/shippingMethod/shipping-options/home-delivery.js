@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
@@ -30,14 +29,11 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
 export default function HomeDelivery({ shippingSelected }) {
   return (
     <>
       {shippingSelected === 'homeDelivery' && (
-<<<<<<< HEAD
         <div className="flex flex-col gap-4">
           <div className="flex gap-10">
             <div className=" w-full max-w-64">
@@ -119,28 +115,6 @@ export default function HomeDelivery({ shippingSelected }) {
               <h6 className="text-p-tw">地址</h6>
               <Input
                 className="border-1 border-primary-600 w-full  max-w-128 "
-=======
-        <div className="flex gap-10">
-          <div className=" w-full">
-            <label className="flex flex-col  gap-3">
-              <h6 className="text-h6-tw">收貨人</h6>
-
-              <input
-                className="border-1 border-primary-600 w-full h-12 text-p-tw px-2"
-                type="text"
-                name="name"
-                // value={user.name}
-                // onChange={}
-              />
-            </label>
-          </div>
-          {/* <span className={styles['error']}>{errors.name}</span> */}
-          <div className="w-full">
-            <label className="flex flex-col  gap-3  ">
-              <h6 className="text-h6-tw">手機</h6>
-              <input
-                className="border-1 border-primary-600 w-full h-12 text-p-tw  px-2 "
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
                 type="text"
                 name="phone"
                 // value={user.email}
