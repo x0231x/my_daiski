@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { useCart } from '@/hooks/use-cart';
 import Process from '../_components/process';
 import Checkout from '../_components/checkout';
@@ -43,13 +42,6 @@ export default function SummaryPage(props) {
           </div>
         </div>
       </div>
-=======
-
-export default function SummaryPage(props) {
-  return (
-    <>
-      <div>Summary Page</div>
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     </>
   );
 }

@@ -17,19 +17,6 @@ import {
 import { Snowflake } from 'lucide-react';
 import Image from 'next/image';
 
-import React, { useState, useEffect } from 'react';
-import { PiPersonSimpleSki } from 'react-icons/pi';
-import { MapPinned } from 'lucide-react';
-import { InputWithButton } from './_component/input';
-import { DatePickerWithRange } from './_component/datepicker';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Snowflake } from 'lucide-react';
 export default function CoursesPage(props) {
   const [filters, setFilters] = useState({
     keyword: '',
