@@ -56,11 +56,7 @@ export default function Header() {
           <NavigationMenuItem>
             <Link
               href="/courses"
-<<<<<<< HEAD
               className={`group inline-flex h-9 w-max items-center justify-center rounded-md font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
-=======
-              className={`group inline-flex h-9 w-max items-center justify-center rounded-md bg-background font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             >
               滑雪課程
             </Link>
@@ -70,11 +66,7 @@ export default function Header() {
           <NavigationMenuItem>
             <Link
               href="/coaches"
-<<<<<<< HEAD
               className={`group inline-flex h-9 w-max items-center justify-center rounded-md font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
-=======
-              className={`group inline-flex h-9 w-max items-center justify-center rounded-md bg-background font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             >
               教練團隊
             </Link>
@@ -84,11 +76,7 @@ export default function Header() {
           <NavigationMenuItem>
             <Link
               href="/groups"
-<<<<<<< HEAD
               className={`group inline-flex h-9 w-max items-center justify-center rounded-md font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
-=======
-              className={`group inline-flex h-9 w-max items-center justify-center rounded-md bg-background  font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             >
               揪團滑雪
             </Link>
@@ -98,11 +86,7 @@ export default function Header() {
           <NavigationMenuItem>
             <Link
               href="/product"
-<<<<<<< HEAD
               className={`group inline-flex h-9 w-max items-center justify-center rounded-md font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
-=======
-              className={`group inline-flex h-9 w-max items-center justify-center rounded-md bg-background font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 text-base`}
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             >
               商品
             </Link>

@@ -2,19 +2,11 @@ node_modules
 .env
 .vercel
 .env*.local
-<<<<<<< HEAD
 productImages
 uploads
 coachAvatar
 courseImages
 upload
-=======
-uploads
-coachAvatar
-courseImages
-
-
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 # misc
 
 .DS_Store

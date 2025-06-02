@@ -22,11 +22,7 @@ export default function ProductFilter({
   priceError,
 }) {
   return (
-<<<<<<< HEAD
     <div className="flex flex-col md:max-w-48 xl:max-w-64 w-full mx-auto">
-=======
-    <div className="hidden md:flex flex-col max-w-48 xl:max-w-64 w-full mx-auto bg-[#ffffff] text-[#231815]">
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
       {/* Filter Checkboxes */}
       <div className="px-4 py-2">
         {/* ====== 品牌篩選 ====== */}
@@ -48,11 +44,7 @@ export default function ProductFilter({
           </div>
           <Button
             onClick={onResetBrands}
-<<<<<<< HEAD
             className="w-full mt-4 hover:bg-primary-500 cursor-none"
-=======
-            className="w-full mt-4 hover:bg-primary-500 cursor-pointer"
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           >
             重置品牌
           </Button>
@@ -105,11 +97,7 @@ export default function ProductFilter({
             <div className="text-center mt-2">
               <button
                 onClick={onToggleShowAllSizes}
-<<<<<<< HEAD
                 className="text-sm font-medium text-primary-600 dark:text-blue-300 hover:underline cursor-none"
-=======
-                className="text-sm font-medium text-primary-600 hover:underline"
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
               >
                 {showAllSizes ? '收合尺寸' : '查看更多尺寸'}
               </button>
@@ -118,11 +106,7 @@ export default function ProductFilter({
 
           <Button
             onClick={onResetSizes}
-<<<<<<< HEAD
             className="w-full mt-4 hover:bg-primary-500 dark:hover:text-blue-300 cursor-none"
-=======
-            className="w-full mt-4 hover:bg-primary-500"
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           >
             重置尺寸
           </Button>
@@ -155,11 +139,7 @@ export default function ProductFilter({
           </div>
           <Button
             onClick={onTriggerPriceFilter}
-<<<<<<< HEAD
             className="w-full mt-2 hover:bg-primary-500 cursor-none"
-=======
-            className="w-full mt-2 hover:bg-primary-500 cursor-pointer"
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           >
             價格篩選
           </Button>
@@ -169,11 +149,7 @@ export default function ProductFilter({
           )}
 
           <Button
-<<<<<<< HEAD
             className="w-full mt-4 hover:bg-primary-500 cursor-none"
-=======
-            className="w-full mt-4 hover:bg-primary-500 cursor-pointer"
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             onClick={onResetPrice}
           >
             重置價格

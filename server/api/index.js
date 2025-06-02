@@ -12,29 +12,20 @@ import { createClient } from 'redis';
 // 使用檔案的session store，預設是存在sessions資料夾
 import sessionFileStore from 'session-file-store';
 import { serverConfig } from '../config/server.config.js';
-<<<<<<< HEAD
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 // 修正 ESM 中的 __dirname 與 windows os 中的 ESM dynamic import
 import { pathToFileURL, fileURLToPath } from 'url';
-=======
-
-// 修正 ESM 中的 __dirname 與 windows os 中的 ESM dynamic import
-import { pathToFileURL } from 'url';
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // import { fileURLToPath, pathToFileURL } from 'url'
 // const __filename = fileURLToPath(import.meta.url)
 // const __dirname = path.dirname(__filename)
 
 import 'dotenv/config.js';
 
-<<<<<<< HEAD
 // --- Prisma Client 和 MessageType ---
 import { PrismaClient, MessageType } from '@prisma/client'; // 確保 MessageType 被匯入
 const prisma = new PrismaClient(); // 初始化 Prisma Client
 
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // 建立 Express 應用程式
 const app = express();
 // --- Socket.IO 修改 1: 使用 Express app 創建 HTTP 伺服器 ---
@@ -55,22 +46,6 @@ app.use(
   })
 );
 
-<<<<<<< HEAD
-=======
-// cors設定，參數為必要，注意不要只寫`app.use(cors())`
-// 設定白名單，只允許特定網址存取
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000' || 'http://localhost:3005'
-const whiteList = frontendUrl.split(',')
-// 設定CORS
-app.use(
-  cors({
-    origin: whiteList,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  })
-);
-
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // 視圖引擎設定(使用pug)，不使用視圖引擎，所以註解掉
 // res.render()會找views資料夾中的pug檔案
 // app.set('views', path.join(process.cwd(), 'views'))
@@ -134,7 +109,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-<<<<<<< HEAD
 const io = new SocketIOServer(server, {
   cors: {
     origin: whiteList,
@@ -352,9 +326,6 @@ io.on('connection', (socket) => {
   });
 });
 // 您可以在此處添加更多特定於您應用程式的 Socket.IO 事件處理
-=======
-
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // 根路由預設測試畫面
 app.get('/', (req, res) => res.send('Express server is running.'));
 
@@ -405,7 +376,6 @@ for (const filename of filenames) {
 
 // 捕抓404錯誤處理
 app.use(function (req, res, next) {
-<<<<<<< HEAD
   // NOTE 因圖片未同步，所以先不要createError(404)避免錯誤訊息過多
   // next(createError(404));
   res.status(404).send('找不到資源');
@@ -435,25 +405,4 @@ server.listen(port, () => {
 
 // app.listen(port, () => console.log(`Server ready on port ${port}.`));
 
-=======
-  next(createError(404));
-});
-
-// 錯誤處理函式
-app.use(function (err, req, res) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  // 更改為錯誤訊息預設為JSON格式
-  res.status(500).send({ error: err });
-});
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => console.log(`Server ready on port ${port}.`));
-
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 export default app;

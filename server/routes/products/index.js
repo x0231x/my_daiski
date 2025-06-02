@@ -7,7 +7,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-<<<<<<< HEAD
 // ---- Multer 設定（memory 儲存，後面自行存檔） ----
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -135,8 +134,6 @@ router.post('/', upload.array('images'), async (req, res, next) => {
   }
 });
 
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // GET /api/products — 支援 include=card、page、limit、category_id、size_id、min_price、max_price 參數
 router.get('/', async (req, res, next) => {
   const {
@@ -148,21 +145,14 @@ router.get('/', async (req, res, next) => {
     min_price,
     max_price,
     search,
-<<<<<<< HEAD
     sort,
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
   } = req.query;
   const pageNum = Math.max(parseInt(page, 10), 1);
   const pageSize = Math.max(parseInt(limit, 10), 1);
 
   try {
     // 1. 組基礎 where
-<<<<<<< HEAD
     const where = { deleted_at: null };
-=======
-    const where = { delete_at: null };
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 
     // 2. 如果有 search，就加上 name 模糊搜尋
     if (typeof search === 'string' && search.trim().length >= 2) {
@@ -243,7 +233,6 @@ router.get('/', async (req, res, next) => {
       take: pageSize,
     };
 
-<<<<<<< HEAD
     // 1. 根據 sort 決定 orderByArg
     let orderByArg;
     switch (sort) {
@@ -261,8 +250,6 @@ router.get('/', async (req, res, next) => {
         break;
     }
 
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
     // 5. include=card
     if (include === 'card') {
       const raw = await prisma.product.findMany({
@@ -293,12 +280,8 @@ router.get('/', async (req, res, next) => {
         image: p.product_image[0]
           ? `http://localhost:3005${p.product_image[0].url}`
           : 'http://localhost:3005/placeholder.jpg',
-<<<<<<< HEAD
         // price: p.product_sku[0]?.price ?? 0,
         price: p.min_price ?? 0,
-=======
-        price: p.product_sku[0]?.price ?? 0,
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         category: p.product_category?.name ?? '無分類',
         category_id: p.product_category?.id ?? null,
         brand: p.product_brand?.name ?? '無品牌',
@@ -364,11 +347,7 @@ router.get('/search-suggestions', async (req, res, next) => {
 
     const suggestions = await prisma.product.findMany({
       where: {
-<<<<<<< HEAD
         deleted_at: null,
-=======
-        delete_at: null,
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
         name: {
           contains: keyword,
         },
@@ -445,147 +424,6 @@ router.get('/categories', async (req, res, next) => {
 
 // --------------------------------------------------
 // GET /api/products/categories/list — 取得所有分類的 id + name 平面列表
-<<<<<<< HEAD
-=======
-// --------------------------------------------------
-router.get('/categories/list', async (req, res, next) => {
-  try {
-    const categories = await prisma.productCategory.findMany({
-      where: {
-        deleted_at: null, // 如果你有做軟刪除
-      },
-      select: {
-        id: true,
-        name: true,
-      },
-      // orderBy: {
-      //   name: 'asc', // 可以依名稱排序（或 parentId、created_at）
-      // },
-    });
-
-    if (!categories.length) {
-      return res.status(404).json({ message: 'no categories found' });
-    }
-
-    res.json(categories);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// --------------------------------------------------
-// GET /api/products/sizes — 取得所有尺寸，或特定分類下可用的尺寸
-// --------------------------------------------------
-router.get('/sizes', async (req, res, next) => {
-  const { category_id } = req.query;
-
-  try {
-    // 如果有帶 category_id，先抓該分類（含所有子孫分類）的 ID
-    let sizeFilter = {};
-    if (category_id) {
-      const catId = Number(category_id);
-      // 1. 抓所有 descendant id（含自己）
-      const paths = await prisma.productCategoryPath.findMany({
-        where: { ancestor: catId },
-        select: { descendant: true },
-      });
-      const categoryIds = paths.map((p) => p.descendant);
-
-      // 2. 從 product_sku 找出這些分類下所有未刪除且有指定 size_id 的 sku
-      const skuRows = await prisma.productSku.findMany({
-        where: {
-          deleted_at: null,
-          size_id: { not: null },
-          product: {
-            delete_at: null,
-            category_id: { in: categoryIds },
-          },
-        },
-        distinct: ['size_id'],
-        select: { size_id: true },
-      });
-      const sizeIds = skuRows.map((s) => s.size_id);
-
-      sizeFilter = { id: { in: sizeIds } };
-    }
-
-    // 最後從 product_size 取出符合條件的尺寸清單
-    const sizes = await prisma.productSize.findMany({
-      where: sizeFilter,
-      orderBy: { sort_order: 'asc' },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    res.json(sizes);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// --------------------------------------------------
-// GET /api/products/brands — 取得所有品牌，或特定分類下可用的品牌
-// --------------------------------------------------
-router.get('/brands', async (req, res, next) => {
-  const { category_id } = req.query;
-
-  try {
-    // 1. 如果有帶 category_id，先抓該分類（含所有子孫）的 ID
-    let brandFilter = {};
-    if (category_id) {
-      const catId = Number(category_id);
-      // a. 拿所有 descendant id（含自己）
-      const paths = await prisma.productCategoryPath.findMany({
-        where: { ancestor: catId },
-        select: { descendant: true },
-      });
-      const categoryIds = paths.map((p) => p.descendant);
-
-      // b. 從 product 找出這些分類下所有未刪除且有 brand_id 的商品
-      const productRows = await prisma.product.findMany({
-        where: {
-          delete_at: null,
-          brand_id: { not: null },
-          category_id: { in: categoryIds },
-        },
-        distinct: ['brand_id'],
-        select: { brand_id: true },
-      });
-      const brandIds = productRows.map((p) => p.brand_id);
-
-      // c. 在品牌過濾條件中加入這些 ID
-      if (brandIds.length) {
-        brandFilter.id = { in: brandIds };
-      } else {
-        // 若完全沒有符合的品牌，就直接回空陣列
-        return res.json([]);
-      }
-    }
-
-    // 2. 最後從 product_brand 取出符合條件的品牌清單
-    const brands = await prisma.productBrand.findMany({
-      where: {
-        deleted_at: null,
-        ...brandFilter,
-      },
-      orderBy: { sort_order: 'asc' },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    res.json(brands);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// --------------------------------------------------
-// GET /api/products/:id — 取得單一商品
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 // --------------------------------------------------
 router.get('/categories/list', async (req, res, next) => {
   try {
