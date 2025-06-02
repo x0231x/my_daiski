@@ -52,10 +52,7 @@ function generatePageItems(currentPage, totalPages, onPageChangeCallback) {
     items.push(
       <PaginationItem key={i}>
         <PaginationLink
-<<<<<<< HEAD
           href="#"
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           onClick={() => onPageChangeCallback(i)} // 呼叫傳入的 onPageChange
           isActive={currentPage === i}
         >
@@ -75,14 +72,10 @@ function generatePageItems(currentPage, totalPages, onPageChangeCallback) {
     }
     items.push(
       <PaginationItem key={totalPages}>
-<<<<<<< HEAD
         <PaginationLink
           href="#"
           onClick={() => onPageChangeCallback(totalPages)}
         >
-=======
-        <PaginationLink onClick={() => onPageChangeCallback(totalPages)}>
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
           {totalPages}
         </PaginationLink>
       </PaginationItem>
@@ -114,10 +107,7 @@ export function CustomPagination({ currentPage, totalPages, onPageChange }) {
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-<<<<<<< HEAD
             href="#"
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             onClick={handlePrevious}
             aria-disabled={currentPage === 1}
             // 根據需要添加禁用樣式，shadcn/ui 可能有自己的處理方式
@@ -131,10 +121,7 @@ export function CustomPagination({ currentPage, totalPages, onPageChange }) {
 
         <PaginationItem>
           <PaginationNext
-<<<<<<< HEAD
             href="#"
-=======
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
             onClick={handleNext}
             aria-disabled={currentPage === totalPages}
             className={
