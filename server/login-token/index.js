@@ -45,15 +45,11 @@ app.post('/api/users/login', upload.none(), (req, res) => {
     secretkey,
     { expiresIn: '1d' }
   );
-<<<<<<< HEAD
   res.json({
     status: 'success',
     data: { token },
     message: '登入成功',
   });
-=======
-  res.json({ status: 'success', data: { token }, message: '登入成功' });
->>>>>>> 318e321f242dec24a9b5abd3cc1a5a6b0377536c
 });
 app.post('/api/users/logout', checkToken, (req, res) => {
   const token = jwt.sign(

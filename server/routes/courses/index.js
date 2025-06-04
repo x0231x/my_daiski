@@ -1,12 +1,54 @@
 import express from 'express';
 import prisma from '../../lib/prisma.js';
+// import { orderBy } from 'lodash';
+import { Prisma } from '@prisma/client';
 
 const router = express.Router();
 
 // 抓課程列表
 router.get('/', async function (req, res) {
+  const { boardtype, location, difficulty, keyword } = req.query;
+
+  const where = {
+    deleted_at: null,
+
+    ...(keyword && {
+      OR: [
+        { name: { contains: keyword } },
+        { description: { contains: keyword } },
+      ],
+    }),
+    ...(boardtype && {
+      CourseVariant: {
+        some: {
+          coach: {
+            BoardtypeCoach: {
+              some: {
+                boardtype: { name: boardtype },
+              },
+            },
+          },
+        },
+      },
+    }),
+    // 依位置篩
+    ...(location && {
+      CourseVariant: {
+        some: { location: { name: location } },
+      },
+    }),
+
+    // 依難度篩
+    ...(difficulty && {
+      CourseVariant: {
+        some: { difficulty },
+      },
+    }),
+  };
+
   try {
-    const course = await prisma.course.findMany({
+    const courses = await prisma.course.findMany({
+      where,
       orderBy: { start_at: 'asc' },
       select: {
         id: true,
@@ -15,17 +57,25 @@ router.get('/', async function (req, res) {
         end_at: true,
         CourseImg: {
           take: 1,
+          orderBy: { id: 'desc' },
           select: { img: true },
         },
+
         CourseVariant: {
           select: {
             id: true,
             price: true,
+            location: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
     });
-    const result = course.map((c) => {
+    const result = courses.map((c) => {
       const fmt = (date) =>
         new Date(date).toLocaleDateString('zh-TW', {
           year: 'numeric',
@@ -37,9 +87,9 @@ router.get('/', async function (req, res) {
         name: c.name,
         // 例如 "2025/01/01~2025/01/05"
         period: `${fmt(c.start_at)}~${fmt(c.end_at)}`,
-        // price: c.price,
         photo: c.CourseImg[0]?.img || null,
         price: c.CourseVariant[0]?.price || null,
+        location: c.CourseVariant[0]?.location.name || null,
       };
     });
 
@@ -47,6 +97,28 @@ router.get('/', async function (req, res) {
   } catch (error) {
     console.error('取得課程列表失敗：', error);
     res.status(500).json({ message: '伺服器錯誤，無法讀取課程列表' });
+  }
+});
+
+// 篩選項目
+// GET /api/courses/filters
+router.get('/filters', async (_, res) => {
+  try {
+    const [boardTypes, locations, difficulties] = await Promise.all([
+      prisma.boardtype.findMany({ select: { name: true } }),
+      prisma.location.findMany({ select: { name: true } }),
+      prisma.courseVariant.findMany({
+        distinct: ['difficulty'],
+        select: { difficulty: true },
+      }),
+    ]);
+    res.json({
+      boardTypes: boardTypes.map((b) => b.name),
+      locations: locations.map((l) => l.name),
+      difficulties: difficulties.map((d) => d.difficulty),
+    });
+  } catch (e) {
+    res.status(500).send('篩選清單錯誤');
   }
 });
 
@@ -75,17 +147,14 @@ router.get('/:id/sign-up', async (req, res) => {
             price: true,
             duration: true,
             coach_id: true,
+            location: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
-        // location: {
-        //   select: {
-        //     id: true,
-        //     name: true,
-        //     country: true,
-        //     city: true,
-        //     address: true,
-        //   },
-        // },
       },
     });
     // 若找不到資料則回傳 404
@@ -118,7 +187,12 @@ router.get('/:id/sign-up', async (req, res) => {
         start_at: fmt(v.start_at),
         image: v.courseImg?.img || null,
         coach_id: v.coach_id,
-        location_id: v.location_id,
+        location_id: v.location
+          ? {
+              id: v.location.id,
+              name: v.location.name,
+            }
+          : null,
       })),
     };
 
@@ -157,9 +231,13 @@ router.get('/:id', async (req, res) => {
             difficulty: true,
             price: true,
             duration: true,
+            // boardtype_id: true,
             // location_id: true,
             coach: {
               select: { id: true, name: true, profilephoto: true },
+            },
+            boardtype: {
+              select: { id: true, name: true },
             },
             courseImg: {
               select: { img: true },
@@ -207,6 +285,7 @@ router.get('/:id', async (req, res) => {
       // 多張圖片
       images: course.CourseImg.map((i) => i.img),
       difficulty: course.CourseVariant[0].difficulty,
+      // boardtype: course.CourseVariant[0].boardtype_id,
       price: course.CourseVariant[0].price,
       duration: course.CourseVariant[0].duration,
       variants: course.CourseVariant.map((v) => ({
@@ -219,6 +298,10 @@ router.get('/:id', async (req, res) => {
           id: v.coach.id,
           name: v.coach.name,
           photo: v.coach.profilephoto,
+        },
+        boardtype: {
+          id: v.boardtype.id,
+          name: v.boardtype.name,
         },
         photo: v.courseImg?.img ?? null,
         location: {
