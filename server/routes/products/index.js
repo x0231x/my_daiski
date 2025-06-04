@@ -287,12 +287,14 @@ router.get('/', async (req, res, next) => {
               : 0;
           const totalRatings = ratingStats._count.id;
 
+          const base = process.env.NEXT_PUBLIC_API_BASE || '';
+
           return {
             id: p.id,
             name: p.name,
             image: p.product_image[0]
-              ? `http://localhost:3005${p.product_image[0].url}`
-              : 'http://localhost:3005/placeholder.jpg',
+              ? `${base}/${p.product_image[0].url}`
+              : `${base}/placeholder.jpg`,
             price: p.min_price ?? 0,
             category: p.product_category?.name ?? '無分類',
             category_id: p.product_category?.id ?? null,
