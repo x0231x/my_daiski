@@ -335,8 +335,16 @@ app.get('/', (req, res) => res.send('Express server is running.'));
 //  routes/user.js ==> /api/user
 //  routes/user/login.js ==> /api/user/login
 const apiPath = '/api'; // 預設路由
-const routePath = path.join(process.cwd(), 'routes');
+
+// 先取得當前檔案（server/api/index.js）的 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+// 正確指向 /var/task/server/routes
+const routePath = path.join(__dirname, '..', 'routes');
 const filenames = await fs.promises.readdir(routePath);
+// const routePath = path.join(process.cwd(), 'routes');
+// const filenames = await fs.promises.readdir(routePath);
 
 for (const filename of filenames) {
   // statSync同步取得檔案資訊，判斷是檔案或資料夾
