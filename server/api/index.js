@@ -7,13 +7,8 @@ import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
 import path from 'path';
-import session from 'express-session';
-// 不再匯入 RedisStore / createClient
-import sessionFileStore from 'session-file-store';
-import { serverConfig } from '../config/server.config.js';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-// 修正 ESM 中的 __dirname 與 WINDOWS OS 中的 ESM 動態 import
 import { pathToFileURL, fileURLToPath } from 'url';
 
 import 'dotenv/config.js';
@@ -24,10 +19,10 @@ const prisma = new PrismaClient();
 
 // 建立 Express 應用程式
 const app = express();
-// --- Socket.IO 修改 1: 使用 Express app 創建 HTTP 伺服器 ---
+// 使用 Express app 建立 HTTP 伺服器 (供 Socket.IO 使用)
 const server = http.createServer(app);
 
-// CORS 設定（從環境變數抓 FRONTEND_URL，否則預設 localhost）
+// CORS 設定
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 const whiteList   = frontendUrl.split(',');
 app.use(
@@ -48,35 +43,7 @@ app.use(cookieParser());
 // 提供靜態檔案（public 資料夾）
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// ===== 移除 Redis 相關，直接只使用 session-file-store =====
-const FileStore    = sessionFileStore(session);
-const sessionStore = new FileStore({ logFn: () => {} });
-
-const isDev = process.env.NODE_ENV === 'development';
-const options = isDev
-  ? { maxAge: 30 * 86400000 }
-  : {
-      domain:   serverConfig.domain,
-      maxAge:   30 * 86400000, // session 保存 30 天
-      httpOnly: true,
-      secure:   true,
-      sameSite: 'none',
-    };
-
-// Vercel 上若非開發環境，就信任 proxy
-if (!isDev) app.set('trust proxy', 1);
-
-app.use(
-  session({
-    store:            sessionStore,      // 只用檔案式 Session
-    name:             'SESSION_ID',
-    secret:           '67f71af4602195de2450faeb6f8856c0',
-    proxy:            !isDev,
-    cookie:           options,
-    resave:           false,
-    saveUninitialized: false,
-  })
-);
+// ===== 完全移除 Session 相關程式碼（不再使用 express-session） =====
 
 // ===== Socket.IO 初始化 =====
 const io = new SocketIOServer(server, {
@@ -336,7 +303,7 @@ app.use((err, req, res) => {
   res.status(err.status || 500).send({ error: err.message });
 });
 
-// --- Socket.IO 修改 4: 啟動伺服器 ---
+// --- 啟動伺服器 (含 Socket.IO) ---
 const port = process.env.PORT || 3005;
 server.listen(port, () => {
   console.log(`API 伺服器 (含 Socket.IO) 正在 http://localhost:${port} 上運行`);
