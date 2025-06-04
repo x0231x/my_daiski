@@ -69,29 +69,28 @@ model UserCoupon {
 // 商品
 // #region
 model Product {
-  id               Int              @id @default(autoincrement())
-  name             String           @db.VarChar(255)
+  id               Int       @id @default(autoincrement())
+  name             String    @db.VarChar(255)
   category_id      Int?
   brand_id         Int?
   min_price        Int?
-  introduction     String?          @db.Text
-  spec             String?          @db.Text
-  created_at       DateTime         @default(now()) @map("created_at")
-  publish_at       DateTime?        @map("publish_at")
-  unpublish_at     DateTime?        @map("unpublish_at")
-  deleted_at       DateTime?        @map("deleted_at")
-  product_brand    ProductBrand?    @relation(fields: [brand_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_product_brand")
+  introduction     String?   @db.Text
+  spec             String?   @db.Text
+  created_at       DateTime  @default(now()) @map("created_at")
+  publish_at       DateTime? @map("publish_at")
+  unpublish_at     DateTime? @map("unpublish_at")
+  deleted_at       DateTime? @map("deleted_at")
+  product_brand    ProductBrand? @relation(fields: [brand_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_product_brand")
   product_category ProductCategory? @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "product_ibfk_1")
   product_image    ProductImage[]
   product_sku      ProductSku[]
 
-  favorites UserFavorite[]
+  favorites        UserFavorite[]
 
   @@index([category_id], map: "category_id")
-  @@index([brand_id], map: "fk_product_brand")
+  @@index([brand_id], map: "idx_product_brand_id") // <--- 修改這裡
   @@map("product")
 }
-
 model ProductBrand {
   id         Int       @id @default(autoincrement())
   name       String    @unique @db.VarChar(255)
